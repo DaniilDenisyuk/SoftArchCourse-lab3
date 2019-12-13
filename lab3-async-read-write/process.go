@@ -26,7 +26,7 @@ func check(e error) bool {
 	return false
 }
 
-func calculateHash(name string) {
+func readWriteAsync(name string) {
 	defer wg.Done()
 
 	const BufferSize = 20
@@ -56,7 +56,7 @@ func calculateHash(name string) {
 	check(err)
 }
 
-func readWriteAsync() {
+func main() {
 	files, err := ioutil.ReadDir(dirIn)
 	check(err)
 	if _, err := os.Stat(dirOut); os.IsNotExist(err) {
@@ -66,15 +66,11 @@ func readWriteAsync() {
 	count := 0
 	for _, file := range files {
 		wg.Add(1)
-		go calculateHash(file.Name())
+		go readWriteAsync(file.Name())
 		count++
 	}
 
 	wg.Wait()
 
 	fmt.Println("Total number of processed files:", count)
-}
-
-func main() {
-	readWriteAsync()
 }
